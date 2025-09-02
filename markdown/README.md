@@ -3371,12 +3371,66 @@ You get the following key information for each parameter to be passed:
 | `fetchBill`        | 1 = Need to call Fetch Bill API before the Pay Bill API    | Controls the sequence of API calls |
 | `BBPS`             | 1 = The biller is provided by Bharat BillPay.              | Indicates BBPS biller for branding |
 
+### 8. Activate BBPS Service API
+Use this API to activate BBPS service for your user (agent/merchant/retailer) on the platform. This is required for your users to use BBPS services on this platform.
+
+#### Details
+- **Method:** PUT
+- **URL Endpoint:** /admin/network/agent/{user_code}/bbps/activate
+- **Request Structure:**
+  - Body Parameters:
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)  
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "service_status_desc": "Activated",
+    "user_code": "20110002",
+    "initiator_id": "9962981729",
+    "service_status": "1",
+    "service_code": "59"
+  },
+  "response_type_id": 1302,
+  "message": "User state is activated for this service",
+  "status": 0
+}
+
 
 ---
 
 # Fund Transfer APIs
 
-### Initiate Fund Transfer API
+### 1. Activate Fund Transfer Service For Agent API
+Use this API to activate Fund Transfer service for your user (agent/merchant/retailer) on the platform. This is required for your users to use Fund Transfer services on this platform.
+
+#### Details
+- **Method:** PUT
+- **URL Endpoint:** /admin/network/agent/{user_code}/fund-transfer/activate
+- **Request Structure:**
+  - Body Parameters:
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)  
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "service_status_desc": "Pending",
+    "user_code": "20110002",
+    "initiator_id": "9962981729",
+    "service_status": "1",
+    "service_code": "45"
+  },
+  "response_type_id": 1302,
+  "message": "Service activated for this user",
+  "status": 0
+}
+
+```
+
+### 2. Initiate Fund Transfer API
 Initiate a fund transfer to any bank account.
 
 #### Details
@@ -3420,7 +3474,7 @@ Initiate a fund transfer to any bank account.
 
 #### Description
 **Transaction Flow:**
-- Activate this service (only in production) using the Activate Service for Agent API with service_code = 45.
+- Activate this service (only in production) using the Activate Service for Agent API.
 - Use this API to initiate the fund transfer.
 - Check the status using Transaction Inquiry API or set up a Transaction Status Callback.
 
@@ -5867,3 +5921,430 @@ This API retrieves a list of scheduled transactions for an agent.
   - **Query Params:**
     - initiator_id (string, required): Your registered mobile number (See Platform Credentials for UAT).
     - user_code (string, required): Unique code of your registered agent/retailer.
+
+----
+
+# Aeps (Aadhaar Enabled Payment System) - FINGPAY
+
+## 1. AEPS eKYC APIs
+
+### 1.1 EKYC OTP Request
+
+Use this API to request an OTP for AEPS eKYC using Fingpay.
+
+#### Details
+- **Method:** PUT
+- **URL Endpoint:** /user/collection/aeps-fingpay/kyc/otp
+- **Request Structure:**
+  - **Body Parameters:**
+    - **initiator_id** (string / required) - Registered mobile number of the agent.
+    - **user_code** (string / required) - User code of the agent.
+    - **aadhar** (string / required) - Aadhaar number (encrypted).
+    - **customer_id** (string / required) - Customer's mobile number.
+    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format (Example: 26.8863786,75.7393589).
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "user_code": "20810200",
+    "reference_tid": "EKYKF4719702240123152147525I",
+    "otp_ref_id": "2465238"
+  },
+  "response_type_id": 1600,
+  "message": "OTP request has been sent",
+  "status": 0
+}
+```
+
+
+### 1.2 EKYC OTP Verify
+
+Use this API to verify the OTP sent for AEPS eKYC on merchant's aadhaar associated cell number.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /user/collection/aeps-fingpay/kyc/otp/verify
+- **Request Structure:**
+  - **Body Parameters:**
+    - **initiator_id** (string / required) - Registered mobile number of the agent.
+    - **user_code** (string / required) - User code of the agent.
+    - **aadhar** (string / required) - Aadhaar number (encrypted).
+    - **customer_id** (string / required) - Customer's mobile number.
+    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+    - **otp** (string / required) - OTP received on the Aadhaar-registered mobile.
+    - **otp_ref_id** (string / required) - OTP reference ID received in the OTP request API.
+    - **reference_tid** (string / required) - Reference transaction ID received in the OTP request API.
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "user_code": "20810200",
+    "reference_tid": "EKYKF4719702240123152147525I",
+    "otp_ref_id": "2465238"
+  },
+  "response_type_id": 1604,
+  "message": "Validation successful",
+  "status": 0
+}
+```
+
+
+### 1.3 EKYC Biometric
+
+Use this API to perform biometric eKYC for merchant.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /user/collection/aeps-fingpay/kyc/biometric
+- **Request Structure:**
+  - **Body Parameters:**
+    - **initiator_id** (string / required) - Registered mobile number of the agent.
+    - **user_code** (string / required) - User code of the agent.
+    - **aadhar** (string / required) - Aadhaar number (encrypted).
+    - **customer_id** (string / required) - Customer's mobile number.
+    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+    - **otp_ref_id** (string / required) - OTP reference ID received in the OTP verify API.
+    - **reference_tid** (string / required) - Reference transaction ID.
+    - **bank_code** (string / required) - Bank code (e.g., HDFC).
+    - **client_ref_id** (string / required) - Unique client reference ID.
+    - **piddata** (string / required) - PID data returned by the biometric device in XML format.
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "user_code": "20810200"
+  },
+  "response_type_id": 1605,
+  "message": "Congratulations! eKYC successful",
+  "status": 0
+}
+```
+
+
+### 1.4 Daily KYC
+
+Use this API to perform daily biometric KYC for the merchant.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /user/collection/aeps-fingpay/kyc/biometric/daily
+- **Request Structure:**
+  - **Body Parameters:**
+    - **initiator_id** (string / required) - Registered mobile number of the agent.
+    - **user_code** (string / required) - User code of the agent.
+    - **aadhar** (string / required) - Aadhaar number (encrypted).
+    - **customer_id** (string / required) - Customer's mobile number.
+    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+    - **bank_code** (string / required) - Bank code (e.g., HDFC).
+    - **piddata** (string / required) - PID data returned by the biometric device in XML format.
+    - **client_ref_id** (string / required) - Unique client reference ID.
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "user_code": "20810200"
+  },
+  "response_type_id": 1605,
+  "message": "Congratulations! DailyKYC successful",
+  "status": 0
+}
+```
+
+---
+
+## 2. AEPS Transaction APIs - Fingpay
+
+### 2.1 AEPS Cash Withdrawal
+
+Use this API to perform a cash withdrawal transaction via AEPS.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/collection/aeps-fingpay/cash-withdrawl/{customer_id}
+- **Path Parameters:**
+  - **customer_id** (string / required) - Customer's mobile number.
+- **Body Parameters:**
+  - **initiator_id** (string / required) - Registered mobile number of the agent.
+  - **user_code** (string / required) - User code of the agent.
+  - **amount** (string / required) - Amount to withdraw.
+  - **source_ip** (string / required) - IP address of the agent/retailer making the request.
+  - **aadhar** (string / required) - Aadhaar number (encrypted).
+  - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+  - **bank_code** (string / required) - Bank code (e.g., HDFC).
+  - **piddata** (string / required) - PID data returned by the biometric device in XML format.
+  - **client_ref_id** (string / required) - Unique client reference ID.
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 2,
+  "data": {
+    "tx_status": "1",
+    "transaction_date": "07-07-21 13:29:35",
+    "reason": "Transaction Success",
+    "amount": "100",
+    "merchant_code": "",
+    "shop": "Nirmal Maheshwari",
+    "fee": "",
+    "sender_name": "John Cena",
+    "tid": "2157059989",
+    "auth_code": "00",
+    "shop_address_line1": "Eko India, Haryana, Gurgaonr,-122001",
+    "user_code": "20810200",
+    "service_tax": "0.0",
+    "totalfee": "0.0",
+    "merchantname": "Customer Name",
+    "stan": "443434",
+    "aadhar": "XXXX XXXX 9999",
+    "customer_balance": "",
+    "transaction_time": "07-07-21 13:29:35",
+    "comment": "Transaction Success",
+    "bank_ref_num": "RRN1989123435555",
+    "terminal_id": ""
+  },
+  "response_type_id": 1465,
+  "message": "Transaction Success",
+  "status": 0
+}
+```
+
+### 2.2 AEPS Balance Enquiry
+
+Use this API to check the balance of a customer's Aadhaar-linked bank account.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/collection/{customer_id}/aeps-fingpay/balance-enquiry
+- **Path Parameters:**
+  - **customer_id** (string / required) - Customer's mobile number.
+- **Body Parameters:**
+  - **initiator_id** (string / required) - Registered mobile number of the agent.
+  - **user_code** (string / required) - User code of the agent.
+  - **source_ip** (string / required) - IP address of the agent/retailer making the request.
+  - **aadhar** (string / required) - Aadhaar number (encrypted).
+  - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+  - **bank_code** (string / required) - Bank code (e.g., HDFC).
+  - **piddata** (string / required) - PID data returned by the biometric device in XML format.
+  - **client_ref_id** (string / required) - Unique client reference ID.
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "transaction_date": "30-01-23 22:04:59",
+    "reason": "",
+    "amount": "0.0",
+    "merchant_code": "",
+    "shop": "Nirmal Maheshwari",
+    "fee": "",
+    "sender_name": "Shiva",
+    "tid": "2158314344",
+    "auth_code": "00",
+    "shop_address_line1": "Eko India, Haryana, Gurgaonr,-122001",
+    "user_code": "20810200",
+    "service_tax": "0.0",
+    "totalfee": "0.0",
+    "merchantname": "Customer Name",
+    "stan": "443434",
+    "aadhar": "XXXX XXXX 1234",
+    "customer_balance": "1000.00",
+    "transaction_time": "30-01-23 22:04:59",
+    "comment": "Mock Successful",
+    "bank_ref_num": "RRN1989123435555",
+    "terminal_id": ""
+  },
+  "response_type_id": 1466,
+  "message": "Transaction Successful",
+  "status": 0
+}
+
+```
+
+
+### 2.3 AEPS Mini Statement
+
+
+Use this API to fetch the mini statement of a customer's Aadhaar-linked bank account via AEPS using Fingpay.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/collection/aeps-fingpay/mini-statement/{customer_id}
+- **Path Parameters:**
+  - **customer_id** (string / required) - Customer's mobile number.
+- **Body Parameters:**
+  - **initiator_id** (string / required) - Registered mobile number of the agent.
+  - **user_code** (string / required) - User code of the agent.
+  - **source_ip** (string / required) - IP address of the agent/retailer making the request.
+  - **aadhar** (string / required) - Aadhaar number (encrypted).
+  - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+  - **bank_code** (string / required) - Bank code (e.g., HDFC).
+  - **piddata** (string / required) - PID data returned by the biometric device in XML format.
+  - **client_ref_id** (string / required) - Unique client reference ID.
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "transaction_date": "30-01-23 22:09:57",
+    "merchant_code": "",
+    "mini_statement_list": [
+      {
+        "date": "31/12/2019",
+        "amount": "1.00",
+        "narration": " INF/INFT/021841",
+        "txnType": "Cr"
+      },
+      {
+        "date": "31/12/2019",
+        "amount": "1.00",
+        "narration": " INT/INFT/021842",
+        "txnType": "Dr"
+      }
+    ],
+    "sender_name": "Mr. Rohit",
+    "tid": "2158314347",
+    "service_tax": "0.0",
+    "totalfee": "0.0",
+    "merchantname": "Customer Name",
+    "customer_balance": "1000.00",
+    "transaction_time": "30-01-23 22:09:57",
+    "comment": "Mock Successful",
+    "commission": "0.0",
+    "bank_ref_num": "T9824355443434",
+    "terminal_id": ""
+  },
+  "response_type_id": 1527,
+  "message": "Transaction Successful",
+  "status": 0
+}
+
+```
+
+## 3. AEPS Settlement APIs - Fingpay
+
+### 3.1 Add AEPS Settlement Account
+
+This api will enable merchant to add his/her bank accounts to his profile for enabling fund settlement.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /user/payment/aeps/settlement/account
+- **Request Structure:**
+  - **Body Parameters:**
+    - **initiator_id** (string / required) - Registered mobile number of the agent.
+    - **user_code** (string / required) - User code of the agent.
+    - **account** (string / required) - Bank account number to be added for settlement.
+    - **ifsc** (string / required) - IFSC code of the bank branch.
+    - **client_ref_id** (string / required) - Unique client reference ID for the settlement request.
+    - **bank_id** (string / required) - Unique ID assigned to the bank.
+
+
+#### Sample Response
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "recipient_id": 1893
+  },
+  "response_type_id": 1336,
+  "message": "Account added",
+  "status": 0
+}
+```
+
+---
+
+### 3.2 Get AEPS Settlement Accounts
+
+This api will return the list of recipients mapped to the merchant for fund settlement services.
+
+#### Details
+- **Method:** GET
+- **URL Endpoint:** /user/payment/aeps/settlement/accounts
+- **Query Parameters:**
+  - **initiator_id** (string / required) - Registered mobile number of the agent.
+  - **user_code** (string / required) - User code of the agent.
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "unsettled_fund": "6100.0",
+    "remaining_limit": "190000",
+    "fund_transfer_list": [
+      {
+        "name": "Gaurav Mallik",
+        "ifsc": "PUNB0309300",
+        "account": "9989834392752938",
+        "recipient_id": "1828"
+      },
+      {
+        "name": "Gaurav Mallik",
+        "ifsc": "BKID0006701",
+        "account": "987867867967969",
+        "recipient_id": "1829"
+      }
+    ]
+  },
+  "response_type_id": 1321,
+  "message": "List of fund transfer recipients",
+  "status": 0
+}
+```
+
+---
+
+### 3.3 Initiate AEPS Settlement
+
+This api will allow merchant to transfer funds to his account for his AePS business
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /user/payment/aeps/settlement
+- **Request Structure:**
+  - **Body Parameters (x-www-form-urlencoded):**
+    - **initiator_id** (string / required) - Registered mobile number of the agent.
+    - **user_code** (string / required) - User code of the agent.
+    - **amount** (string / required) - Amount to be settled.
+    - **client_ref_id** (string / required) - Unique client reference ID for the settlement request.
+    - **recipient_id** (string / required) - Recipient ID of the settlement account (received from Add AEPS Settlement Account API).
+    - **payment_mode** (string / required) - Payment mode (e.g., 5 for IMPS).
+
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "tx_status": "2",
+    "amount": "100.00",
+    "balance": "2.251010664E7",
+    "txstatus_desc": "Initiated",
+    "totalfee": "5.00",
+    "ifsc": "BKID0006701",
+    "account": "987867867967969",
+    "tid": "12937465"
+  },
+  "response_type_id": 1329,
+  "message": "Transaction initiated successfully",
+    "status": 0
+}
+```
