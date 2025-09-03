@@ -1,12 +1,7 @@
 openapi: 3.1.0
 info:
-  title: EPS API
-  version: 0.1.1
-  termsOfService: https://example.com/terms/
-  contact:
-    name: Contact Eko
-    email: info@eko.co.in
-    url: http://example.com/contact
+  title: Eko Platform Services APIs
+  version: 3.0.0
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -36,22 +31,26 @@ info:
 
     # OpenAPI Specification
 
-    The goal of The OpenAPI Specification is to define a standard,
-    language-agnostic interface to REST APIs which
-
-    allows both humans and computers to discover and understand the capabilities
-    of the service without access to source
-
-    code, documentation, or through network traffic inspection. When properly
-    defined via OpenAPI, a consumer can
-
-    understand and interact with the remote service with a minimal amount of
-    implementation logic. Similar to what
-
-    interfaces have done for lower-level programming, OpenAPI removes the
-    guesswork in calling the service.
+    The goal of The OpenAPI Specification is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via OpenAPI, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, OpenAPI removes the guesswork in calling the service.
 servers:
-  - url: https://staging.eko.in:25004/ekoicici/v1
+  - url: https://staging.eko.in/ekoapi/v{version}
+    description: Staging URL
+    variables:
+      version:
+        default: '3'
+        enum:
+          - '1'
+          - '3'
+        description: The API version
+  - url: https://api.eko.in/ekoicici/v{version}
+    description: Production URL
+    variables:
+      version:
+        default: '3'
+        enum:
+          - '1'
+          - '3'
+        description: The API version
 tags:
   - name: Agent Management
     description: Onboard your agents/users and manage services for them.
@@ -74,7 +73,7 @@ tags:
   - name: AePS Fund Settlement
     description: sample description
 externalDocs:
-  description: Checkout the developer portal to read the detailed guides
+  description: Read the detailed guides on Eko Developer Portal
   url: https://developers.eko.in
 paths:
   /user/services:
@@ -103,8 +102,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://staging.eko.in:25004/ekoicici/v1
   /user/request/otp:
     put:
       summary: Request OTP
@@ -140,8 +137,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://api.eko.in:25002/ekoicici/v1
   /user/verify:
     put:
       summary: Verify User Mobile Number
@@ -159,8 +154,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://staging.eko.in:25004/ekoapi/v1
   /user/onboard:
     put:
       summary: Onboard User
@@ -183,8 +176,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://staging.eko.in:25004/ekoicici/v1
   /user/service/activate:
     put:
       summary: Activate Service
@@ -224,8 +215,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://staging.eko.in:25004/ekoicici/v1
   /user/services/user_code:{user_code}:
     get:
       summary: User Services Enquiry
@@ -251,8 +240,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://staging.eko.in:25004/ekoicici/v1
   /onboard:
     put:
       summary: Onboard_PUT
@@ -270,8 +257,6 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://api.eko.in:25002/ekoicici/v1/user
   /customers/mobile_number:{mobile_number}:
     get:
       summary: Get customer information
@@ -297,15 +282,12 @@ paths:
           headers: {}
       deprecated: false
       security: []
-      servers:
-        - url: https://staging.eko.in:25004
-          variables: {}
 components:
   parameters:
     initiator_id:
       name: initiator_id
       in: query
-      description: ''
+      description: Your registered mobile number
       required: true
       schema:
         type: integer
@@ -314,23 +296,27 @@ components:
     developer_key:
       name: developer_key
       in: header
-      description: ''
+      description: Your static API key ([See Guide](auth))
       required: true
       schema:
         type: string
+        minLength: 20
+        maxLength: 50
         example: becbbce45f79c6f5109f848acd540567
     secret-key:
       name: secret-key
       in: header
-      description: ''
+      description: Your dynamically generated security key, unique for every request
       required: true
       schema:
         type: string
+        minLength: 40
+        maxLength: 60
         example: MC6dKW278tBef+AuqL/5rW2K3WgOegF0ZHLW/FriZQw=
     secret-key-timestamp:
       name: secret-key-timestamp
       in: header
-      description: ''
+      description: The current timestamp used to generate secret-key
       required: true
       schema:
         type: integer
