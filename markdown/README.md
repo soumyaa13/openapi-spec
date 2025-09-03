@@ -6348,3 +6348,30 @@ This api will allow merchant to transfer funds to his account for his AePS busin
     "status": 0
 }
 ```
+
+# Redirection Products
+
+### CreditLinks Redirection URL API 
+Use this API to generate the Credit Links redirection URL for your user (agent/merchant/retailer).
+
+#### Details
+- **Method:** GET
+- **URL Endpoint:** /users/payment/redirection/creditlinks
+- **Request Structure:**
+  - Body Parameters:
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)  
+    - user_code (string / required) - Unique code (registered mobile number) of your agent/retailer  
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": 0,
+  "data": {
+    "redirect_url": "https://tracking.creditlinks.in/go?campaign_id=doK58OsFtBkh&publisher_id=owExxXBUjCYs&url=https%3A%2F%2Floans.creditlinks.in%2FjIQoBOrt&sub_id=1&sub_id2=9622000256&sub_id3=10001846"
+  },
+  "response_type_id": 2382,
+  "message": "CreditLink redirection url success",
+  "status": 0
+}
+```
+
