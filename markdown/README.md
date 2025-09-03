@@ -3379,7 +3379,7 @@ Use this API to activate BBPS service for your user (agent/merchant/retailer) on
 - **URL Endpoint:** /admin/network/agent/{user_code}/bbps/activate
 - **Request Structure:**
   - Body Parameters:
-    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)  
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
 
 #### Sample Response (200 OK)
 ```json
@@ -3474,7 +3474,7 @@ Initiate a fund transfer to any bank account.
 
 #### Description
 **Transaction Flow:**
-- Activate this service (only in production) using the Activate Service for Agent API.
+- Activate this service (only in production) using the `Activate Fund Transfer Service For Agent API`.
 - Use this API to initiate the fund transfer.
 - Check the status using Transaction Inquiry API or set up a Transaction Status Callback.
 
@@ -5924,7 +5924,7 @@ This API retrieves a list of scheduled transactions for an agent.
 
 ----
 
-# Aeps (Aadhaar Enabled Payment System) - FINGPAY
+# AEPS (Aadhaar Enabled Payment System) - FINGPAY
 
 ## 1. AEPS eKYC APIs
 
@@ -6072,7 +6072,7 @@ Use this API to perform a cash withdrawal transaction via AEPS.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/collection/aeps-fingpay/cash-withdrawl/{customer_id}
+- **URL Endpoint:** /customer/collection/aeps-fingpay/cash-withdrawal/{customer_id}
 - **Path Parameters:**
   - **customer_id** (string / required) - Customer's mobile number.
 - **Body Parameters:**
@@ -6102,7 +6102,7 @@ Use this API to perform a cash withdrawal transaction via AEPS.
     "sender_name": "John Cena",
     "tid": "2157059989",
     "auth_code": "00",
-    "shop_address_line1": "Eko India, Haryana, Gurgaonr,-122001",
+    "shop_address_line1": "Eko India, Haryana, Gurgaon,-122001",
     "user_code": "20810200",
     "service_tax": "0.0",
     "totalfee": "0.0",
@@ -6240,7 +6240,7 @@ Use this API to fetch the mini statement of a customer's Aadhaar-linked bank acc
 
 ### 3.1 Add AEPS Settlement Account
 
-This api will enable merchant to add his/her bank accounts to his profile for enabling fund settlement.
+This API will enable merchant to add his/her bank accounts to his profile for enabling fund settlement.
 
 #### Details
 - **Method:** POST
@@ -6255,7 +6255,7 @@ This api will enable merchant to add his/her bank accounts to his profile for en
     - **bank_id** (string / required) - Unique ID assigned to the bank.
 
 
-#### Sample Response
+#### Sample Response (200 OK)
 ```json
 {
   "response_status_id": 0,
@@ -6345,7 +6345,7 @@ This api will allow merchant to transfer funds to his account for his AePS busin
   },
   "response_type_id": 1329,
   "message": "Transaction initiated successfully",
-    "status": 0
+  "status": 0
 }
 ```
 
@@ -6358,9 +6358,9 @@ Use this API to generate the Credit Links redirection URL for your user (agent/m
 - **Method:** GET
 - **URL Endpoint:** /users/payment/redirection/creditlinks
 - **Request Structure:**
-  - Body Parameters:
-    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)  
-    - user_code (string / required) - Unique code (registered mobile number) of your agent/retailer  
+  - Query Parameters:
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
+    - user_code (string / required) - Unique code (registered mobile number) of your agent/retailer
 
 #### Sample Response (200 OK)
 ```json
