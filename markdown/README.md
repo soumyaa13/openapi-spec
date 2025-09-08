@@ -358,8 +358,8 @@ Using the APIs in this section, you can Onboard your users (or, agents) for your
 Use this API to onboard your user (agent/merchant/retailer) on the platform. This is required for your users to use services on this platform.
 
 #### Details
-- **Method:** PUT
-- **URL Endpoint:** /user/account
+- **Method:** POST
+- **URL Endpoint:** /user/network/eps-agent
 - **Request Structure:**
   - Body Parameters:
     - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
@@ -500,12 +500,28 @@ Get the current balance (E-value) of your or your user's wallet.
 - **Method:** GET
 - **URL Endpoint:** /user/account/balance
 - **Request Structure:**
-  - Query Parameters:
+  - **Path Parameters:**
+    - customer_id (string / required) - Partner's mobile number
+  - **Query Parameters**:
     - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
     - customer_id_type (string / required) - Defaults to "mobile_number"
     - customer_id (string / required) - Registered mobile number for the wallet (e.g., your registered mobile number)
 
-
+#### Sample Response (200 OK For Existing Sender)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "last_used_okekey": "0",
+    "balance": "2.20834002375E9",
+    "currency": "INR",
+    "customer_id": "9910028267"
+  },
+  "response_type_id": 1,
+  "message": "SUCCESS",
+  "status": 0
+}
+```
 ---
 
 # Customer Management APIs
@@ -613,11 +629,12 @@ Use this API to resend the OTP to the customer for verification.
 ## 1. Sender APIs
 
 ### 1.1 Get Sender Information API
+
 Use this API to check if the sender has been created on the platform. If the sender exists, use the Get Sender Information and Verify OTP API to retrieve details such as the sender's monthly limit, used balance, and remaining balance. If the sender does not exist, create the sender before using other services.
 
 #### Details
 - **Method:** GET
-- **URL Endpoint:** /customer/profile/{customer_id}
+- **URL Endpoint:** /customer/profile/{customer_id}/ppi-digikhata
 - **Request Structure:**
   - **Path Parameters:**
     - **customer_id** (string / required) - Sender's mobile number
@@ -659,11 +676,12 @@ The API sends an OTP to the existing sender.
 ```
 
 ### 1.2 Onboard Sender API
+
 Use this API to onboard a new sender and enable them for services such as PPI.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/account
+- **URL Endpoint:** /customer/account/{customer_id}/ppi-digikhata
 - **Request Structure:**
   - **Body Parameters:**
     - **initiator_id** (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
@@ -694,11 +712,12 @@ The API triggers an OTP to be delivered to the sender.
 ```
 
 ### 1.3 Verify Sender OTP API
+
 Use this API to verify the sender's mobile number using an OTP.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/account/{customer_id}/ppi/otp/verify
+- **URL Endpoint:** /customer/account/{customer_id}/ppi-digikhata/otp/verify
 - **Request Structure:**
   - **Path Parameters:**
     - **customer_id** (string / required) - Sender's mobile number
@@ -785,7 +804,8 @@ Use this API to verify the sender's mobile number using an OTP.
 }
 ```
 
-### 1.4 Validate Aadhaar API
+### 1.4 Validate Sender Aadhaar API
+
 Use this API to verify the sender's Aadhaar.
 
 #### Details
@@ -816,12 +836,12 @@ Use this API to verify the sender's Aadhaar.
 }
 ```
   
-### 1.5 Validate PAN API
+### 1.5 Validate Sender PAN API
 This API is used to verify the sender's PAN (Permanent Account Number).
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/account/{customer_id}/ppi/pan
+- **URL Endpoint:** /customer/account/{customer_id}/ppi-digikhata/pan
 - **Request Structure:**
   - **Path Parameters:**
     - **customer_id** (string / required) - Sender's mobile number
@@ -886,11 +906,12 @@ This API is used to verify the sender's PAN (Permanent Account Number).
 ## 2. Recipient APIs
 
 ### 2.1 Get List of Recipients API
+
 Use this API to retrieve a list of recipients associated with a sender. The response will include details such as the recipient's name, IFSC code, beneficiary ID, and recipient ID.
 
 #### Details
 - **Method:** GET
-- **URL Endpoint:** /customer/payment/ppi/sender/{customer_id}/recipients
+- **URL Endpoint:** /customer/payment/ppi-digikhata/sender/{customer_id}/recipients
 - **Request Structure:**
   - **Path Parameters:**
     - **customer_id** (string / required) - Sender's mobile number
@@ -977,11 +998,12 @@ Use this API to retrieve a list of recipients associated with a sender. The resp
 ```
 
 ### 2.2 Add Recipient API
+
 Use this API to add a new recipient or update an existing recipient for a sender. 
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/payment/ppi/sender/{customer_id}/recipient
+- **URL Endpoint:** /customer/payment/ppi-digikhata/sender/{customer_id}/recipient
 - **Request Structure:**
   - **Path Parameters:**
     - **customer_id** (string / required) - Sender's mobile number
@@ -1017,12 +1039,13 @@ Use this API to add a new recipient or update an existing recipient for a sender
 ```
 
 
-### 2.3 Add Recipient Bank API
+### 2.3 Register Recipient With Bank API
+
 Use this API to add a recipient's bank.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/payment/ppi/sender/{customer_id}/bank/recipient
+- **URL Endpoint:** /customer/payment/ppi-digikhata/sender/{customer_id}/recipient/bank
 - **Request Structure:**
   - **Path Parameters:**
     - **customer_id** (string / required) - Sender's mobile number
@@ -1053,11 +1076,12 @@ Use this API to add a recipient's bank.
 ## 3. PPI Transaction APIs
 
 ### 3.1 Send Transaction OTP API
+
 The system will generate a One-Time Password (OTP) and deliver it to the sender's registered mobile number as part of a security or verification process.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/payment/ppi/otp
+- **URL Endpoint:** /customer/payment/ppi-digikhata/otp
 - **Request Structure:**
   - **Body Parameters:**
     - **initiator_id** (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
@@ -1083,12 +1107,13 @@ The system will generate a One-Time Password (OTP) and deliver it to the sender'
 }
 ```  
 
-### 3.2 Initiate Transaction API
+### 3.2 Initiate PPI-DigiKhata Transaction API
+
 Initiate a PPI transaction to a bank account.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/payment/ppi
+- **URL Endpoint:** /customer/payment/ppi-digikhata
 - **Request Structure:**
   - **Body Parameters:**
     - **initiator_id** (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
@@ -3033,9 +3058,8 @@ Use this API to retrieve a list of recipients associated with a sender. The resp
     "message": "No recepients found",
     "status": 0
 }
-
-
 ```
+
 ### 2.2 Add Recipient API
 Use this API to add a new recipient or update an existing recipient for a sender. 
 
@@ -3197,28 +3221,33 @@ Initiate a DMT transaction to a bank account.
 ---
 # Bill Payment APIs
 
-### 1. Pay Credit Card Bill API
-Use this API to pay the credit card bill for a customer. The process includes activating the service for your agent, onboarding your customer, and completing the bill payment by providing necessary details.
+### 1. Activate BBPS Service API
+
+Use this API to activate BBPS service for your user (agent/merchant/retailer) on the platform. This is required for your users to use BBPS services on this platform.
 
 #### Details
-- **Method:** POST
-- **URL Endpoint:** /customer/payment/credit-card-bill
+- **Method:** PUT
+- **URL Endpoint:** /admin/network/agent/{user_code}/bbps/activate
 - **Request Structure:**
-  - **Body Parameters:**
+  - **Body Parameters**:
     - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
-    - recipient_id (string / required) - The ID that you get after adding a recipient
-    - amount (string / required) - The payment amount
-    - client_ref_id (string / required) - Unique reference number of your system, ensure it's as unique as possible to avoid duplication
-    - customer_id (string / required) - ID generated using the create customer API
-    - channel (string / required) - Defaults to 2
 
-#### Description
-
-> **Credit Card Bill Payment Flow:**
-> - Activate the service for your agent by calling the Activate Service for Agent API with service_code = 63.
-> - Onboard and verify the customer.
-> - Use Domestic Money Transfer APIs to add recipient.
-> - Complete the credit card bill payment process by providing the necessary details through the payment API.
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "service_status_desc": "Activated",
+    "user_code": "20110002",
+    "initiator_id": "9962981729",
+    "service_status": "1",
+    "service_code": "53"
+  },
+  "response_type_id": 1302,
+  "message": "User state is activated for this service",
+  "status": 0
+}
+```
 
 
 ### 2. Pay BBPS Bill API
@@ -3370,32 +3399,6 @@ You get the following key information for each parameter to be passed:
 | `error_message`    | Error message to be shown if the user input does not match the regex | Provides feedback to the user   |
 | `fetchBill`        | 1 = Need to call Fetch Bill API before the Pay Bill API    | Controls the sequence of API calls |
 | `BBPS`             | 1 = The biller is provided by Bharat BillPay.              | Indicates BBPS biller for branding |
-
-### 8. Activate BBPS Service API
-Use this API to activate BBPS service for your user (agent/merchant/retailer) on the platform. This is required for your users to use BBPS services on this platform.
-
-#### Details
-- **Method:** PUT
-- **URL Endpoint:** /admin/network/agent/{user_code}/bbps/activate
-- **Request Structure:**
-  - Body Parameters:
-    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
-
-#### Sample Response (200 OK)
-```json
-{
-  "response_status_id": -1,
-  "data": {
-    "service_status_desc": "Activated",
-    "user_code": "20110002",
-    "initiator_id": "9962981729",
-    "service_status": "1",
-    "service_code": "59"
-  },
-  "response_type_id": 1302,
-  "message": "User state is activated for this service",
-  "status": 0
-}
 
 
 ---
@@ -3588,6 +3591,46 @@ Pay money from your Eko wallet to any bank account using UPI-registered Mobile N
 }
 ```
 
+### 3. VPA Verification API 
+
+The API is used to validate a customer's Virtual Payment Address (VPA/UPI ID) before initiating a UPI payment.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/payment/upi/validate-vpa
+- **Request Structure:**
+  - **Body Parameters:**
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
+    - user_code (string / required) - User Code of retailer
+    - customer_vpa (string / required) - Vpa in which you want the amount to be settled
+    - name (string / required) - Name of the receiver who is associated with the vpa
+    - client_ref_id (string / required) - Unique transaction ID which you will generate from your end for every transaction
+    - latlong (string / required) – User's geolocation coordinates in "latitude,longitude" format (Example: 26.8863786,75.7393589)
+
+#### Sample Response (200 OK)
+```json
+{
+    "response_status_id": 0,
+    "data": {
+        "tx_status": "0",
+        "amount": "",
+        "tds": "",
+        "fee": "8.26",
+        "customer_vpa": "rahul3@oksbi",
+        "tid": "3465748168",
+        "client_ref_id": "",
+        "balance": "",
+        "recipient_mobile": "99999999",
+        "commission": "",
+        "recipient_name": "Rahul",
+        "recipient_id": 126342140,
+        "timestamp": "Sun Sep 07 03:41:20 IST 2025"
+    },
+    "response_type_id": 1983,
+    "message": "Transaction Success",
+    "status": 0
+}
+```
 ---
 
 # UPI Collection APIs
@@ -3739,6 +3782,32 @@ Eko’s QR Payment API provides an end-to-end solution from QR code generation t
 - For each `sender_id`, only one QR string can be generated.
 
 
+### 4. Activate QR service API
+Use this API to activate QR service for your user (agent/merchant/retailer) on the platform. This is required for your users to use QR-based services on this platform.
+
+#### Details
+- **Method:** PUT
+- **URL Endpoint:** /admin/network/agent/{user_code}/qr/activate
+- **Request Structure:**
+  - Body Parameters:
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)  
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "service_status_desc": "Activated",
+    "user_code": "20110002",
+    "initiator_id": "9962981729",
+    "service_status": "1",
+    "service_code": "59"
+  },
+  "response_type_id": 1302,
+  "message": "User state is activated for this service",
+  "status": 0
+}
+```
 ---
 
 # KYC & Verification APIs
@@ -3990,7 +4059,42 @@ You get the following key information in the `data` object of the response:
   "status": 0
 }
 ```
+### 1.7. Bank Account Verification (Sync) API
+Verify a bank account number by transferring ₹1 to retrieve the name of the account holder.
 
+> **Note:** Not applicable for all banks. Only applicable for banks for whom account verification feature is available. This can be checked by using the Get Bank Details API.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /tools/kyc/bank-account/sync
+- **Request Structure:**
+  - **Body Parameters:**
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming
+    - bank_account (string / required) -The complete bank account number that needs to be verified.
+    - ifsc (string / required) - IFSC code of the bank.
+    - source (string / required) - Pass default values as 'API'.
+    - client_ref_id (string / required) -  A unique ID for every API call generated at your end.
+
+#### Sample Response (200 OK)
+```json
+{
+    "response_status_id": 0,
+    "data": {
+        "utr": "52203113252332",
+        "reference_id": 1364158654,
+        "city": "CHENNAI",
+        "bank_name": "HDFC BANK",
+        "micr": 43845732,
+        "account_status_code": "ACCOUNT_IS_VALID",
+        "account_status": "VALID",
+        "name_at_bank": "Card",
+        "branch": "CHENNAI - CARD OPERATIONS"
+    },
+    "response_type_id": 0,
+    "status": 0
+}
+```
 
 ## 2. PAN Verification APIs
 
@@ -5926,22 +6030,72 @@ This API retrieves a list of scheduled transactions for an agent.
 
 # AEPS (Aadhaar Enabled Payment System) - FINGPAY
 
-## 1. AEPS eKYC APIs
+### 1. Activate Service
+Use this API to activate AePS Fingpay service for your user (agent/merchant/retailer) on the platform. This is required for your users to use AePS Fingpay services on this platform.
 
-### 1.1 EKYC OTP Request
+#### Details
+- **Method:** PUT
+- **URL Endpoint:** /agent/{user_code}/aeps-fingpay/activate
+- **Request Structure:**
+  - Body Parameters (multipart/form-data):
+    - form-data (json / required) – Structured JSON string containing:
+      - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
+      - devicenumber (string / required) - Biometric device number of the agent
+      - modelname (string / required) - Model name of the biometric device (e.g. Morpho) 
+      - account (string / required) - Bank account number of the agent  
+      - ifsc (string / required) - IFSC code of the agent’s bank  
+      - aadhar (string / required) - Aadhaar number of the agent  
+      - shop_type (string / required) - Shop type code of the agent  
+      - latlong (string / required) - Latitude and longitude of the shop location (format: lat,long)
+      - address_as_per_proof (json / required) - Address details as per proof document
+        - line (string) - Address line  
+        - city (string) - City  
+        - state (string) - State  
+        - pincode (string) - Pincode  
+        - state_id (string) - State identifier  
+      - office_address (json / required) - Office/shop address of the agent  
+        - line (string) - Address line  
+        - city (string) - City  
+        - state (string) - State  
+        - pincode (string) - Pincode  
+        - state_id (string) - State identifier  
+    - pan_card (file / required) - PAN card image of the agent 
+    - aadhar_front (file / required) - Aadhaar card front image of the agent
+    - aadhar_back (file / required) - Aadhaar card back image of the agent
+
+#### Sample Response (200 OK)
+```json
+{
+  "response_status_id": -1,
+  "data": {
+    "service_status_desc": "Pending",
+    "user_code": "20110002",
+    "initiator_id": "9962981729",
+    "service_status": "2",
+    "service_code": "43"
+  },
+  "response_type_id": 1302,
+  "message": "User state is pending for this service",
+  "status": 0
+}
+```
+
+## 2. AEPS eKYC APIs
+
+### 2.1 EKYC OTP Request
 
 Use this API to request an OTP for AEPS eKYC using Fingpay.
 
 #### Details
-- **Method:** PUT
+- **Method:** POST
 - **URL Endpoint:** /user/collection/aeps-fingpay/kyc/otp
 - **Request Structure:**
   - **Body Parameters:**
-    - **initiator_id** (string / required) - Registered mobile number of the agent.
-    - **user_code** (string / required) - User code of the agent.
-    - **aadhar** (string / required) - Aadhaar number (encrypted).
-    - **customer_id** (string / required) - Customer's mobile number.
-    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format (Example: 26.8863786,75.7393589).
+    - initiator_id (string / required) - Registered mobile number of the agent.
+    - user_code (string / required) - User code of the agent.
+    - aadhar (string / required) - Aadhaar number (encrypted).
+    - customer_id (string / required) - Customer's mobile number.
+    - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format (Example: 26.8863786,75.7393589).
 
 
 #### Sample Response (200 OK)
@@ -5960,7 +6114,7 @@ Use this API to request an OTP for AEPS eKYC using Fingpay.
 ```
 
 
-### 1.2 EKYC OTP Verify
+### 2.2 EKYC OTP Verify
 
 Use this API to verify the OTP sent for AEPS eKYC on merchant's aadhaar associated cell number.
 
@@ -5969,14 +6123,14 @@ Use this API to verify the OTP sent for AEPS eKYC on merchant's aadhaar associat
 - **URL Endpoint:** /user/collection/aeps-fingpay/kyc/otp/verify
 - **Request Structure:**
   - **Body Parameters:**
-    - **initiator_id** (string / required) - Registered mobile number of the agent.
-    - **user_code** (string / required) - User code of the agent.
-    - **aadhar** (string / required) - Aadhaar number (encrypted).
-    - **customer_id** (string / required) - Customer's mobile number.
-    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
-    - **otp** (string / required) - OTP received on the Aadhaar-registered mobile.
-    - **otp_ref_id** (string / required) - OTP reference ID received in the OTP request API.
-    - **reference_tid** (string / required) - Reference transaction ID received in the OTP request API.
+    - initiator_id (string / required) - Registered mobile number of the agent.
+    - user_code (string / required) - User code of the agent.
+    - aadhar (string / required) - Aadhaar number (encrypted).
+    - customer_id (string / required) - Customer's mobile number.
+    - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+    - otp (string / required) - OTP received on the Aadhaar-registered mobile.
+    - otp_ref_id (string / required) - OTP reference ID received in the OTP request API.
+    - reference_tid (string / required) - Reference transaction ID received in the OTP request API.
 
 
 #### Sample Response (200 OK)
@@ -5995,25 +6149,25 @@ Use this API to verify the OTP sent for AEPS eKYC on merchant's aadhaar associat
 ```
 
 
-### 1.3 EKYC Biometric
+### 2.3 EKYC Biometric
 
 Use this API to perform biometric eKYC for merchant.
 
 #### Details
-- **Method:** POST
+- **Method:** PUT
 - **URL Endpoint:** /user/collection/aeps-fingpay/kyc/biometric
 - **Request Structure:**
   - **Body Parameters:**
-    - **initiator_id** (string / required) - Registered mobile number of the agent.
-    - **user_code** (string / required) - User code of the agent.
-    - **aadhar** (string / required) - Aadhaar number (encrypted).
-    - **customer_id** (string / required) - Customer's mobile number.
-    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
-    - **otp_ref_id** (string / required) - OTP reference ID received in the OTP verify API.
-    - **reference_tid** (string / required) - Reference transaction ID.
-    - **bank_code** (string / required) - Bank code (e.g., HDFC).
-    - **client_ref_id** (string / required) - Unique client reference ID.
-    - **piddata** (string / required) - PID data returned by the biometric device in XML format.
+    - initiator_id (string / required) - Registered mobile number of the agent.
+    - user_code (string / required) - User code of the agent.
+    - aadhar (string / required) - Aadhaar number (encrypted).
+    - customer_id (string / required) - Customer's mobile number.
+    - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+    - otp_ref_id (string / required) - OTP reference ID received in the OTP verify API.
+    - reference_tid (string / required) - Reference transaction ID.
+    - bank_code (string / required) - Bank code (e.g., HDFC).
+    - client_ref_id (string / required) - Unique client reference ID.
+    - piddata (string / required) - PID data returned by the biometric device in XML format.
 
 
 #### Sample Response (200 OK)
@@ -6030,23 +6184,23 @@ Use this API to perform biometric eKYC for merchant.
 ```
 
 
-### 1.4 Daily KYC
+### 2.4 Daily KYC
 
 Use this API to perform daily biometric KYC for the merchant.
 
 #### Details
-- **Method:** POST
+- **Method:** PUT
 - **URL Endpoint:** /user/collection/aeps-fingpay/kyc/biometric/daily
 - **Request Structure:**
   - **Body Parameters:**
-    - **initiator_id** (string / required) - Registered mobile number of the agent.
-    - **user_code** (string / required) - User code of the agent.
-    - **aadhar** (string / required) - Aadhaar number (encrypted).
-    - **customer_id** (string / required) - Customer's mobile number.
-    - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
-    - **bank_code** (string / required) - Bank code (e.g., HDFC).
-    - **piddata** (string / required) - PID data returned by the biometric device in XML format.
-    - **client_ref_id** (string / required) - Unique client reference ID.
+    - initiator_id (string / required) - Registered mobile number of the agent.
+    - user_code (string / required) - User code of the agent.
+    - aadhar (string / required) - Aadhaar number (encrypted).
+    - customer_id (string / required) - Customer's mobile number.
+    - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+    - bank_code (string / required) - Bank code (e.g., HDFC).
+    - piddata (string / required) - PID data returned by the biometric device in XML format.
+    - client_ref_id (string / required) - Unique client reference ID.
 
 
 #### Sample Response (200 OK)
@@ -6064,9 +6218,9 @@ Use this API to perform daily biometric KYC for the merchant.
 
 ---
 
-## 2. AEPS Transaction APIs - Fingpay
+## 3. AEPS Transaction APIs - Fingpay
 
-### 2.1 AEPS Cash Withdrawal
+### 3.1 AEPS Cash Withdrawal
 
 Use this API to perform a cash withdrawal transaction via AEPS.
 
@@ -6074,17 +6228,17 @@ Use this API to perform a cash withdrawal transaction via AEPS.
 - **Method:** POST
 - **URL Endpoint:** /customer/collection/aeps-fingpay/cash-withdrawal/{customer_id}
 - **Path Parameters:**
-  - **customer_id** (string / required) - Customer's mobile number.
+  - customer_id (string / required) - Customer's mobile number.
 - **Body Parameters:**
-  - **initiator_id** (string / required) - Registered mobile number of the agent.
-  - **user_code** (string / required) - User code of the agent.
-  - **amount** (string / required) - Amount to withdraw.
-  - **source_ip** (string / required) - IP address of the agent/retailer making the request.
-  - **aadhar** (string / required) - Aadhaar number (encrypted).
-  - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
-  - **bank_code** (string / required) - Bank code (e.g., HDFC).
-  - **piddata** (string / required) - PID data returned by the biometric device in XML format.
-  - **client_ref_id** (string / required) - Unique client reference ID.
+  - initiator_id (string / required) - Registered mobile number of the agent.
+  - user_code (string / required) - User code of the agent.
+  - amount (string / required) - Amount to withdraw.
+  - source_ip (string / required) - IP address of the agent/retailer making the request.
+  - aadhar (string / required) - Aadhaar number (encrypted).
+  - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+  - bank_code (string / required) - Bank code (e.g., HDFC).
+  - piddata (string / required) - PID data returned by the biometric device in XML format.
+  - client_ref_id (string / required) - Unique client reference ID.
 
 
 #### Sample Response (200 OK)
@@ -6121,24 +6275,24 @@ Use this API to perform a cash withdrawal transaction via AEPS.
 }
 ```
 
-### 2.2 AEPS Balance Enquiry
+### 3.2 AEPS Balance Enquiry
 
 Use this API to check the balance of a customer's Aadhaar-linked bank account.
 
 #### Details
 - **Method:** POST
-- **URL Endpoint:** /customer/collection/{customer_id}/aeps-fingpay/balance-enquiry
+- **URL Endpoint:** /customer/collection/aeps-fingpay/balance-enquiry/{customer_id}
 - **Path Parameters:**
-  - **customer_id** (string / required) - Customer's mobile number.
+  - customer_id (string / required) - Customer's mobile number.
 - **Body Parameters:**
-  - **initiator_id** (string / required) - Registered mobile number of the agent.
-  - **user_code** (string / required) - User code of the agent.
-  - **source_ip** (string / required) - IP address of the agent/retailer making the request.
-  - **aadhar** (string / required) - Aadhaar number (encrypted).
-  - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
-  - **bank_code** (string / required) - Bank code (e.g., HDFC).
-  - **piddata** (string / required) - PID data returned by the biometric device in XML format.
-  - **client_ref_id** (string / required) - Unique client reference ID.
+  - initiator_id (string / required) - Registered mobile number of the agent.
+  - user_code (string / required) - User code of the agent.
+  - source_ip (string / required) - IP address of the agent/retailer making the request.
+  - aadhar (string / required) - Aadhaar number (encrypted).
+  - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+  - bank_code (string / required) - Bank code (e.g., HDFC).
+  - piddata (string / required) - PID data returned by the biometric device in XML format.
+  - client_ref_id (string / required) - Unique client reference ID.
 
 
 #### Sample Response (200 OK)
@@ -6176,8 +6330,7 @@ Use this API to check the balance of a customer's Aadhaar-linked bank account.
 ```
 
 
-### 2.3 AEPS Mini Statement
-
+### 3.3 AEPS Mini Statement
 
 Use this API to fetch the mini statement of a customer's Aadhaar-linked bank account via AEPS using Fingpay.
 
@@ -6187,14 +6340,14 @@ Use this API to fetch the mini statement of a customer's Aadhaar-linked bank acc
 - **Path Parameters:**
   - **customer_id** (string / required) - Customer's mobile number.
 - **Body Parameters:**
-  - **initiator_id** (string / required) - Registered mobile number of the agent.
-  - **user_code** (string / required) - User code of the agent.
-  - **source_ip** (string / required) - IP address of the agent/retailer making the request.
-  - **aadhar** (string / required) - Aadhaar number (encrypted).
-  - **latlong** (string / required) - User's geolocation coordinates in "latitude,longitude" format.
-  - **bank_code** (string / required) - Bank code (e.g., HDFC).
-  - **piddata** (string / required) - PID data returned by the biometric device in XML format.
-  - **client_ref_id** (string / required) - Unique client reference ID.
+  - initiator_id (string / required) - Registered mobile number of the agent.
+  - user_code (string / required) - User code of the agent.
+  - source_ip (string / required) - IP address of the agent/retailer making the request.
+  - aadhar (string / required) - Aadhaar number (encrypted).
+  - latlong (string / required) - User's geolocation coordinates in "latitude,longitude" format.
+  - bank_code (string / required) - Bank code (e.g., HDFC).
+  - piddata (string / required) - PID data returned by the biometric device in XML format.
+  - client_ref_id (string / required) - Unique client reference ID.
 
 #### Sample Response (200 OK)
 ```json
@@ -6236,9 +6389,9 @@ Use this API to fetch the mini statement of a customer's Aadhaar-linked bank acc
 
 ```
 
-## 3. AEPS Settlement APIs - Fingpay
+## 4. AEPS Settlement APIs - Fingpay
 
-### 3.1 Add AEPS Settlement Account
+### 4.1 Add AEPS Settlement Account
 
 This API will enable merchant to add his/her bank accounts to his profile for enabling fund settlement.
 
@@ -6247,12 +6400,12 @@ This API will enable merchant to add his/her bank accounts to his profile for en
 - **URL Endpoint:** /user/payment/aeps/settlement/account
 - **Request Structure:**
   - **Body Parameters:**
-    - **initiator_id** (string / required) - Registered mobile number of the agent.
-    - **user_code** (string / required) - User code of the agent.
-    - **account** (string / required) - Bank account number to be added for settlement.
-    - **ifsc** (string / required) - IFSC code of the bank branch.
-    - **client_ref_id** (string / required) - Unique client reference ID for the settlement request.
-    - **bank_id** (string / required) - Unique ID assigned to the bank.
+    - initiator_id (string / required) - Registered mobile number of the agent.
+    - user_code (string / required) - User code of the agent.
+    - account (string / required) - Bank account number to be added for settlement.
+    - ifsc (string / required) - IFSC code of the bank branch.
+    - client_ref_id (string / required) - Unique client reference ID for the settlement request.
+    - bank_id (string / required) - Unique ID assigned to the bank.
 
 
 #### Sample Response (200 OK)
@@ -6270,7 +6423,7 @@ This API will enable merchant to add his/her bank accounts to his profile for en
 
 ---
 
-### 3.2 Get AEPS Settlement Accounts
+### 4.2 Get AEPS Settlement Accounts
 
 This api will return the list of recipients mapped to the merchant for fund settlement services.
 
@@ -6312,7 +6465,7 @@ This api will return the list of recipients mapped to the merchant for fund sett
 
 ---
 
-### 3.3 Initiate AEPS Settlement
+### 4.3 Initiate AEPS Settlement
 
 This api will allow merchant to transfer funds to his account for his AePS business
 
@@ -6321,12 +6474,12 @@ This api will allow merchant to transfer funds to his account for his AePS busin
 - **URL Endpoint:** /user/payment/aeps/settlement
 - **Request Structure:**
   - **Body Parameters (x-www-form-urlencoded):**
-    - **initiator_id** (string / required) - Registered mobile number of the agent.
-    - **user_code** (string / required) - User code of the agent.
-    - **amount** (string / required) - Amount to be settled.
-    - **client_ref_id** (string / required) - Unique client reference ID for the settlement request.
-    - **recipient_id** (string / required) - Recipient ID of the settlement account (received from Add AEPS Settlement Account API).
-    - **payment_mode** (string / required) - Payment mode (e.g., 5 for IMPS).
+    - initiator_id (string / required) - Registered mobile number of the agent.
+    - user_code (string / required) - User code of the agent.
+    - amount (string / required) - Amount to be settled.
+    - client_ref_id (string / required) - Unique client reference ID for the settlement request.
+    - recipient_id (string / required) - Recipient ID of the settlement account (received from Add AEPS Settlement Account API).
+    - payment_mode (string / required) - Payment mode (e.g., 5 for IMPS).
 
 
 #### Sample Response (200 OK)
@@ -6348,15 +6501,17 @@ This api will allow merchant to transfer funds to his account for his AePS busin
   "status": 0
 }
 ```
+---
 
-# Redirection Products
+# Credit And Loans
 
 ### CreditLinks Redirection URL API 
+
 Use this API to generate the Credit Links redirection URL for your user (agent/merchant/retailer).
 
 #### Details
 - **Method:** GET
-- **URL Endpoint:** /users/payment/redirection/creditlinks
+- **URL Endpoint:** /users/payment/redirection/creditlinks-personal-loan
 - **Request Structure:**
   - Query Parameters:
     - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
@@ -6374,4 +6529,430 @@ Use this API to generate the Credit Links redirection URL for your user (agent/m
   "status": 0
 }
 ```
+--- 
 
+# Credit Card Bill Payments
+
+## 1. Sender APIs
+
+### 1.1 Get Sender Information API
+
+Use this API to check if the sender has been created on the platform. If the sender exists, use the Get Sender Information and Verify OTP API to retrieve details such as the sender's monthly limit, used balance, and remaining balance. If the sender does not exist, create the sender before using other services.
+
+#### Details
+- **Method:** GET
+- **URL Endpoint:** /customer/profile/{customer_id}
+- **Request Structure:**
+  - **Path Parameters:**
+    - customer_id (string / required) - Sender's mobile number
+  - **Query Parameters:**
+    - initiator_id (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming.
+    
+
+#### Sample Response (200 OK For Existing Sender)
+```json
+{
+    "response_status_id": -1,
+    "data": {
+        "customer_profile": {
+            "total_monthly_limit": "25000",
+            "mobile": "9999999999",
+            "kyc_id": "",
+            "ekyc_enabled": 0,
+            "kyc_validity": "",
+            "kyc_remark": "",
+            "kyc_type": "",
+            "balance": "0.00",
+            "next_allowed_limit": "25000.0",
+            "name": "Shobhit Gosain",
+            "digital_ekyc": 0,
+            "chart": [
+                {
+                    "data_type_id": 10,
+                    "data": {
+                        "unavailable": 0,
+                        "used": 0,
+                        "remaining": 25000
+                    },
+                    "label": ""
+                }
+            ],
+            "email": "",
+            "kyc_state": 0
+        },
+        "id_proof_type_id": "",
+        "is_registered": 0,
+        "id_proof": "",
+        "otpOptionalSum": "",
+        "sender_name": "",
+        "otpNotRequiredSum": "",
+        "ekyc_enabled": "",
+        "wallet_id": "",
+        "otpNotRequiredSumNeft": "",
+        "next_allowed_limit": 25000.0,
+        "kyc_state": 0,
+        "otpOptionalSumNeft": ""
+    },
+    "response_type_id": 309,
+    "message": "Success!",
+    "status": 0
+}
+
+```
+
+#### Sample Response (200 OK For New Sender)
+```json
+{
+  "response_status_id": 1,
+  "data": {
+    "sender_name": "",
+    "ekyc_enabled": ""
+  },
+  "response_type_id": 308,
+  "message": "Failure!Customer Not Enrolled",
+  "status": 308
+}
+```
+
+### 1.2 Onboard Sender API
+
+Use this API to onboard a new sender and enable them for services such as PPI.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/account
+- **Request Structure:**
+  - **Body Parameters:**
+    - initiator_id (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming
+    - customer_id (string / required) - Sender's mobile number
+    - name (string / required) - Name of the sender as per ID
+    - dob (date / required) - Date of birth of the sender in YYYY-MM-DD format
+    - residence_address (array of strings / required) - Address of the sender in JSON format
+
+
+#### Sample Response (200 OK For New Sender)
+```json
+{
+    "response_status_id": 0,
+    "data": {
+        "customer_id_type": "mobile_number",
+        "user_code": "880001",
+        "state_desc": "Non-Kyc",
+        "state": "2",
+        "customer_id": "9777777779"
+    },
+    "response_type_id": 300,
+    "message": "Wallet opened successfully.",
+    "status": 0
+}
+```
+
+### 1.3 Verify Sender OTP API
+
+Use this API to verify the sender's mobile number using an OTP.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/account/otp/verify
+- **Request Structure:**
+  - **Body Parameters:**
+    - initiator_id (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming
+    - otp (int32 / required) - Enter the OTP received from the Onboard Sender API.
+   
+
+#### Sample Response (200 OK For Existing Sender)
+```json
+{
+   "response_status_id": -1,
+   "data": {
+       "customer_profile": {
+           "total_monthly_limit": "25000.0",
+           "mobile": "9444444444",
+           "kyc_id": "",
+           "ekyc_enabled": 0,
+           "kyc_validity": "",
+           "kyc_remark": "",
+           "kyc_type": "",
+           "balance": "0.00",
+           "next_allowed_limit": "5287.0",
+           "name": "Karan Garg",
+           "digital_ekyc": 0,
+           "chart": [
+               {
+                   "data_type_id": 10,
+                   "data": {
+                       "unavailable": 0,
+                       "used": 44713,
+                       "remaining": 5287
+                   },
+                   "label": ""
+               }
+           ],
+           "email": "",
+           "kyc_state": 0
+       },
+       "id_proof_type_id": "",
+       "is_registered": 0,
+       "id_proof": "",
+       "otpOptionalSum": "",
+       "sender_name": "Karan Garg",
+       "otpNotRequiredSum": "",
+       "ekyc_enabled": "",
+       "otpNotRequiredSumNeft": "",
+       "next_allowed_limit": 5287.0,
+       "account": "",
+       "kyc_state": 0,
+       "otpOptionalSumNeft": ""
+   },
+   "response_type_id": 309,
+   "message": "Success!",
+   "status": 0
+}
+
+```
+
+#### Sample Response (200 OK For New Sender)
+```json
+{
+ "response_type_id": 308,
+  "message": "Failure!Customer Not Enrolled",
+  "status": 308
+}
+```
+
+## 2. Recipient APIs
+
+### 2.1 Get Credit Card Bank Detail API
+
+The API will fetch all the bank details available for credit card bill payments.
+
+#### Details
+- **Method:** GET
+- **URL Endpoint:** /tools/reference/banks/credit-card
+- **Request Structure:**
+  - **Body Parameters:**
+    - initiator_id (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming
+
+
+
+### 2.2 Get List of Recipients API
+
+Use this API to retrieve a list of recipients associated with a sender. The response will include details such as the recipient's name, IFSC code and recipient ID.
+
+#### Details
+- **Method:** GET
+- **URL Endpoint:** /customer/payment/sender/{customer_id}/recipients
+- **Request Structure:**
+  - **Path Parameters:**
+    - customer_id (string / required) - Sender's mobile number
+  - **Body Parameters:**
+    - initiator_id (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming.    
+
+#### Sample Response (200 OK)
+```json
+{
+   "response_status_id": 0,
+   "data": {
+       "pan_required": 2,
+       "recipient_list": [
+           {
+               "channel_absolute": 0,
+               "available_channel": 0,
+               "account_type": "Bank Account",
+               "ifsc_status": 1,
+               "is_self_account": "0",
+               "channel": 0,
+               "is_imps_scheduled": 0,
+               "recipient_id_type": "acc_ifsc",
+               "imps_inactive_reason": "",
+               "allowed_channel": 0,
+               "is_verified": 0,
+               "beneficiary_id": 40378,
+               "bank": "Kotak Mahindra Bank",
+               "is_otp_required": "0",
+               "recipient_mobile": "9999999990",
+               "recipient_name": "Aditya",
+               "ifsc": "KKBK0000878",
+               "account": "1XXXXXX90657",
+               "pipes": {
+                   "3": {
+                       "pipe": 3,
+                       "status": 1
+                   }
+               },
+               "recipient_id": 10018839,
+               "is_rblbc_recipient": 1
+           },
+          
+      
+      {
+               "channel_absolute": 2,
+               "available_channel": 2,
+               "account_type": "Bank Account",
+               "ifsc_status": 1,
+               "is_self_account": "0",
+               "channel": 2,
+               "is_imps_scheduled": 0,
+               "recipient_id_type": "acc_ifsc",
+               "imps_inactive_reason": "",
+               "allowed_channel": 2,
+               "is_verified": 0,
+               "beneficiary_id": null,
+               "bank": "State Bank of India",
+               "is_otp_required": "0",
+               "recipient_mobile": "6888888886",
+               "recipient_name": "Rahul",
+               "ifsc": "SBIN00005656",
+               "account": "43XXXXXXXXX45",
+               "pipes": {
+                   "3": {
+                       "pipe": 3,
+                       "status": 1
+                   }
+               },
+               "recipient_id": 10065177,
+               "is_rblbc_recipient": 1
+           }
+       ],
+       "remaining_limit_before_pan_required": 50000.0,
+       "is_insured": ""
+   },
+   "response_type_id": 23,
+   "message": "Success",
+   "status": 0
+}
+
+```
+
+### 2.3 Add Recipient API
+
+Use this API to add a new recipient or update an existing recipient for a sender. 
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/payment/sender/{customer_id}/recipient
+- **Request Structure:**
+  - **Path Parameters:**
+    - customer_id (string / required) - Sender's mobile number
+  - **Body Parameters:**
+    - initiator_id (string / required) - The unique cell number with which you are onboarded on Eko's platform. For UAT, refer to [Platform Credentials](https://developers.eko.in/docs/platform-credentials)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming
+    - bank_id (string / required) - A unique ID is assigned to each bank, which must be provided here.
+    - recipient_name (string / required) - The full name of the recipient.
+    - recipient_mobile (string / required) - A valid 10-digit mobile number of the recipient.
+    - recipient_type (string / required) - value will be 3.
+    - account (string / required) - The recipient's credit card number used for receiving funds.
+    - bank_code (string / required) - The IFSC code of the recipient's bank branch.
+
+#### Sample Response (200 OK)
+```json
+{
+   "response_status_id": 0,
+   "data": {
+       "initiator_id": "6000000094",
+       "recipient_mobile": "9775597777",
+       "recipient_id_type": "",
+       "customer_id": "9444444444",
+       "pipes": {},
+       "recipient_id": 10017740
+   },
+   "response_type_id": 43,
+   "message": "Success!Please transact using Recipientid",
+   "status": 0
+}
+```
+## 3. Bill Payment APIs
+
+### 3.1 Pay Credit Card Bill API
+Use this API to pay the credit card bill for a customer. The process includes activating the service for your agent, onboarding your customer, and completing the bill payment by providing necessary details.
+
+#### Details
+- **Method:** POST
+- **URL Endpoint:** /customer/payment/credit-card-bill
+- **Request Structure:**
+  - **Body Parameters:**
+    - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
+    - user_code (string / required) - User code value of the retailer from whom the request is coming.
+    - recipient_id (string / required) - The ID that you get after adding a recipient
+    - amount (string / required) - The payment amount
+    - client_ref_id (string / required) - Unique reference number of your system, ensure it's as unique as possible to avoid duplication
+    - customer_id (string / required) - ID generated using the create customer API
+    - bank_id (string / required) - Unique ID assigned to the bank.
+    
+#### Description
+
+> **Credit Card Bill Payment Flow:**
+> - Onboard and verify the customer.
+> - Use Recipient APIs to add recipient.
+> - Complete the credit card bill payment process by providing the necessary details through the payment API.
+
+**Note:**
+ - **For Refund:**
+   - When the transaction fails, we automatically send an OTP to the customer. Ask for that OTP from the customer and call the `Get Refund OTP API`.
+     This will act as a consent that you have actually refunded back the cash to the customer. After this API call, we will refund the eValue into your account.
+
+   
+  #### Sample Response (200 OK)
+  
+```json
+{
+    "response_status_id": 0,
+    "data": {
+        "tx_status": "0",
+        "debit_user_id": "6000000094",
+        "tds": "0.0",
+        "txstatus_desc": "Success",
+        "fee": "4.0",
+        "total_sent": "",
+        "channel": "2",
+        "collectable_amount": "114.0",
+        "txn_wallet": "0",
+        "utility_acc_no": "8999999992",
+        "sender_name": "8999999992",
+        "ekyc_enabled": "0",
+        "remaining_limit_before_pan_required": 49678.0,
+        "tid": "2886522975",
+        "bank": "UCO Bank",
+        "utrnumber": "",
+        "insurance_acquired": "",
+        "balance": "814.0",
+        "totalfee": "",
+        "next_allowed_limit": "",
+        "is_otp_required": "0",
+        "aadhar": "",
+        "currency": "INR",
+        "commission": "0.0",
+        "pipe": 13,
+        "state": "1",
+        "bank_ref_num": "250121123714472002",
+        "recipient_id": 10017680,
+        "timestamp": "2025-01-21T07:07:20.562Z",
+        "amount": "110.00",
+        "pan_required": 2,
+        "pinNo": "",
+        "gst_benefit": "0",
+        "payment_mode_desc": "",
+        "channel_desc": "IMPS",
+        "last_used_okekey": "0",
+        "npr": "",
+        "insurance_amount": "",
+        "service_tax": "0.61",
+        "paymentid": "",
+        "mdr": "",
+        "recipient_name": "Krishna",
+        "customer_id": "8999999992",
+        "account": "67544100008454",
+        "kyc_state": ""
+    },
+    "response_type_id": 325,
+    "message": "Transaction successful",
+    "status": 0
+}
+
+```
+---
