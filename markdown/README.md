@@ -266,18 +266,18 @@ Get the status of a transaction using Eko TID or client_ref_id
 - **Method:** GET
 - **URL Endpoint:** /tools/reference/transaction/{transaction-reference}
 - **Request Structure:**
-  - Path Parameters:
-    - transaction-reference (string / required) - Eko TID or your client_ref_id that uniquely identifies the transaction
   - Query Parameters:
     - initiator_id (number / required) - Your registered mobile number (See Platform Credentials for UAT)
     - user_code (string / required) - Unique code of your registered agent/retailer
+    - TID (string / optional) - A unique transaction ID generated at Eko.
+    - client_ref_id (string / optional) - The client_ref_id that uniquely identifies the transaction
 
 
 #### Description
 **Examples:**
-To check the status of a transaction using TID 12345, use following endpoint: `/tools/reference/transaction/12345
+To check the status of a transaction using TID 12345, use request format: `/tools/reference/transaction`
 
-In case you have not received Eko's TID (say, due to network timeout), you can enquire about the status of a transaction using your own unique reference number (say, 567890) by using the following endpoint format: `/tools/reference/transaction/567890`
+In case you have not received Eko's TID (say, due to network timeout), you can enquire about the status of a transaction using your own unique reference number (say, 567890) by using the following parameter in the request -client_ref_id.
 
 **Transaction Timeout:**
 A transaction can timeout due to multiple reasons where partner bank responses could be slow or due to network connectivity, delayed or no response may occur.
@@ -504,8 +504,8 @@ Get the current balance (E-value) of your or your user's wallet.
     - customer_id (string / required) - Partner's mobile number
   - **Query Parameters**:
     - initiator_id (string / required) - Your registered mobile number (See Platform Credentials for UAT)
-    - customer_id_type (string / required) - Defaults to "mobile_number"
-    - customer_id (string / required) - Registered mobile number for the wallet (e.g., your registered mobile number)
+    - user_code (string / required) - Unique code (registered mobile number) of your agent/retailer
+
 
 #### Sample Response (200 OK For Existing Sender)
 ```json
@@ -6869,7 +6869,7 @@ Use this API to add a new recipient or update an existing recipient for a sender
 ## 3. Bill Payment APIs
 
 ### 3.1 Pay Credit Card Bill API
-Use this API to pay the credit card bill for a customer. The process includes activating the service for your agent, onboarding your customer, and completing the bill payment by providing necessary details.
+Use this API to pay the credit card bill for a customer. The process includes onboarding your customer, adding the card number as a beneficiary and completing the bill payment by providing necessary details.
 
 #### Details
 - **Method:** POST
